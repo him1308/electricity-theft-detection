@@ -80,9 +80,28 @@ def get_current_user(
     return user
 
 
+def normalize_role(role: str | None) -> str:
+    return (role or "").strip().lower()
+
+
+def require_roles(*roles: str):
+    allowed = {normalize_role(role) for role in roles}
+
+    def dependency(user: User = Depends(get_current_user)) -> User:
+        if normalize_role(user.role) not in allowed:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+        return user
+
+    return dependency
+
+
 def require_admin(user: User = Depends(get_current_user)) -> User:
-    if user.role != "Admin":
+    if normalize_role(user.role) != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin role required")
+    return user
+
+
+def require_analyst(user: User = Depends(require_roles("Admin", "Analyst"))) -> User:
     return user
 
 

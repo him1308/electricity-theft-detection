@@ -5,7 +5,7 @@ import pandas as pd
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from app.auth import require_admin
+from app.auth import require_analyst
 from app.config import get_settings
 from app.database import get_db
 from app.models import User
@@ -21,7 +21,7 @@ settings = get_settings()
 async def upload_data(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_analyst),
 ) -> dict[str, object]:
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are supported")

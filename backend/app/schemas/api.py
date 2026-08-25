@@ -20,6 +20,17 @@ class UserRead(BaseModel):
     role: str
 
 
+class AdminUserRead(BaseModel):
+    id: int
+    username: str
+    role: str
+    created_at: datetime
+
+
+class UserRoleUpdate(BaseModel):
+    role: str = Field(pattern="^(Admin|Analyst|admin|analyst)$")
+
+
 class ConsumerRead(BaseModel):
     consumer_id: str
     name: str
@@ -65,6 +76,51 @@ class SummaryRead(BaseModel):
     risk_distribution: dict[str, int]
     daily_consumption: list[dict[str, Any]]
     suspicious_over_time: list[dict[str, Any]]
+
+
+class AdminDashboardRead(BaseModel):
+    total_consumers: int
+    high_risk_consumers: int
+    active_alerts: int
+    total_analysts: int
+    total_users: int
+    data_records: int
+    model_performance: float | None = None
+    latest_data_upload: datetime | None = None
+
+
+class AnalystDashboardRead(BaseModel):
+    consumers_analyzed: int
+    high_risk_consumers: int
+    medium_risk_consumers: int
+    pending_investigations: int
+    active_alerts: int
+    recent_suspicious_consumers: list[ConsumerRead]
+
+
+class UploadedDatasetRead(BaseModel):
+    filename: str
+    size_bytes: int
+    uploaded_at: datetime
+    records: int | None = None
+    status: str
+
+
+class DataManagementRead(BaseModel):
+    total_consumers: int
+    total_readings: int
+    uploaded_datasets: list[UploadedDatasetRead]
+
+
+class SystemSettingsRead(BaseModel):
+    app_name: str
+    api_prefix: str
+    access_token_expire_minutes: int
+    cors_origins: list[str]
+    model_path: str
+    database_backend: str
+    uploads_directory: str
+    configuration_source: str
 
 
 class PredictionReading(BaseModel):

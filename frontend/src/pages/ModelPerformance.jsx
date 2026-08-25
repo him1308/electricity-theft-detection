@@ -12,6 +12,7 @@ export default function ModelPerformance() {
   const [training, setTraining] = useState(false);
   const { data, loading, error } = useApi(async () => (await api.get("/model/status")).data, [refresh]);
   const [trainError, setTrainError] = useState("");
+  const isAdmin = (localStorage.getItem("role") || "").toLowerCase() === "admin";
 
   async function train() {
     setTraining(true);
@@ -42,10 +43,12 @@ export default function ModelPerformance() {
               <p className="mt-1 text-sm text-slate-500">Model status: {data.is_trained ? "Trained and persisted" : "Training required"}</p>
             </div>
           </div>
-          <button onClick={train} disabled={training} className="flex items-center justify-center gap-2 rounded-md bg-grid-ink px-4 py-3 font-semibold text-white disabled:opacity-60">
-            <Play size={18} />
-            {training ? "Training..." : "Train Model"}
-          </button>
+          {isAdmin && (
+            <button onClick={train} disabled={training} className="flex items-center justify-center gap-2 rounded-md bg-grid-ink px-4 py-3 font-semibold text-white disabled:opacity-60">
+              <Play size={18} />
+              {training ? "Training..." : "Train Model"}
+            </button>
+          )}
         </div>
         {trainError && <ErrorState message={trainError} />}
       </section>
