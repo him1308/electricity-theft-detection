@@ -1,0 +1,14 @@
+.env
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+dist/
+build/
+backend/data/*.db
+backend/data/uploads/
+backend/ml/*.joblib
+*.log
+/data set.csv
